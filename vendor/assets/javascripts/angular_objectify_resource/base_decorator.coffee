@@ -24,9 +24,7 @@ angular.module('angular_objectify_resource')
               -> @_object[local_key]()
           else
             closure = (local_key)->
-              ->
-                console.log local_key
-                @_object[local_key]
+              -> @_object[local_key]
            @[key] = closure(key)
 
     _decorate_associations: ->

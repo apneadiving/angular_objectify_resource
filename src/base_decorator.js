@@ -33,7 +33,6 @@
             } else {
               closure = function(local_key) {
                 return function() {
-                  console.log(local_key);
                   return this._object[local_key];
                 };
               };
