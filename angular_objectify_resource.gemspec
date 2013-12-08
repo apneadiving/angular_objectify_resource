@@ -7,11 +7,11 @@ require "angular_objectify_resource/version"
 Gem::Specification.new do |s|
   s.name        = "angular_objectify_resource"
   s.version     = AngularObjectifyResource::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of AngularObjectifyResource."
-  s.description = "TODO: Description of AngularObjectifyResource."
+  s.authors     = ["Benjamin Roth"]
+  s.email       = ["benjamin@rubyist.fr"]
+  s.homepage    = "https://github.com/apneadiving/angular_objectify_resource"
+  s.summary     = "Get real objects and decorators (with relations) from angular $resource"
+  s.description = "Get real objects and decorators (with relations) from angular $resource"
 
   s.files       = `git ls-files`.split("\n")
   s.test_files  = `git ls-files -- spec/*`.split("\n")
