@@ -1,5 +1,6 @@
 #= require_self
 #= require base_decorator
+#= require utils
 #= require base_model
 #= require resource_extension
 

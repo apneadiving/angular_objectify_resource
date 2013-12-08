@@ -1,7 +1,7 @@
 angular.module('angular_objectify_resource')
 
-.factory 'aor.BaseModel', ->
-  class App.BaseModel
+.factory 'aor.BaseModel', ['aor.utils', (utils)->
+  class BaseModel
     @HAS_ONE_RELATIONS:  []
     @HAS_MANY_RELATIONS: []
     @DECORATOR: undefined
@@ -15,12 +15,8 @@ angular.module('angular_objectify_resource')
     @decorator: (klass)->
       @DECORATOR = klass
 
-    @string_ends_with: (string, suffix)->
-      string.indexOf(suffix, string.length - suffix.length) != -1
-
     constructor: (resource)->
-
-      _.extend(@, resource)
+      angular.extend(@, resource)
       @_extend_children()
       @_convert_dates()
       @after_init()
@@ -32,39 +28,43 @@ angular.module('angular_objectify_resource')
 
     _convert_dates: ->
       for own key, value of @
-        if ! angular.isFunction(value) && @constructor.string_ends_with(key, '_at')
+        if ! angular.isFunction(value) && utils.string_ends_with(key, '_at')
           @[key] = @_convert_date(value)
 
     _convert_date: (epoch)->
-      return null if _.is_blank(epoch) || epoch is 0
+      return null if !epoch || epoch is 0
       new Date(epoch * 1000)
 
     _extend_children: ->
       for relation in @constructor.HAS_MANY_RELATIONS
-        continue unless @[relation_name]
-
         relation_name = relation.name
-        @[relation_name] = _.map @[relation_name], (child)=>
-          @_extend_child child, relation.class
-        # example for has_many 'foos'
-        # creates method addFoo
-        @["add#{ relation_name.singularize().camelize() }"] = (raw_object)=>
-          object = @_extend_child(raw_object, relation.class)
-          @[relation_name].push object
-          object
+        camelized_relation_name = utils.camelize(utils.singularize(relation_name))
+        build_method_name = "build#{ camelized_relation_name }"
+
+        @[build_method_name] = (raw_object)=>
+          @_extend_child(raw_object, relation.class)
+
+        if @[relation_name]
+          add_method_name = "add#{ camelized_relation_name }"
+          # example for has_many 'foos'
+          # creates method addFoo
+          @[add_method_name] = (raw_object)=>
+            object = @[build_method_name](raw_object)
+            @[relation_name].push object
+            object
+
+          @[relation_name] = _.map @[relation_name], @[build_method_name]
 
       for relation in @constructor.HAS_ONE_RELATIONS
-        continue unless @[relation_name]
-
-        relation_name = relation.name
-        @[relation.name] = @_extend_child @[relation.name], relation.class
-
+        relation_name     = relation.name
+        build_method_name = "build#{ utils.camelize(relation_name) }"
         # example for has_one 'foo'
         # creates method buildFoo
-        @["build#{ relation_name.camelize() }"] = (raw_object)=>
-          object = @_extend_child(raw_object, relation.class)
-          @[relation_name] = object
-          object
+        @[build_method_name] = (raw_object)=>
+          @_extend_child(raw_object, relation.class)
+
+        if @[relation_name]
+          @[relation_name] = @[build_method_name] @[relation_name]
 
     _extend_child: (raw_child, klass)->
       raw_child._parent = @
@@ -72,3 +72,4 @@ angular.module('angular_objectify_resource')
 
     _get_parent: ->
       @_parent
+  ]

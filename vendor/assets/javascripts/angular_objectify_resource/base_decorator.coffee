@@ -1,14 +1,14 @@
 angular.module('angular_objectify_resource')
 
 .factory 'aor.BaseDecorator', ->
-  class App.BaseDecorator
+  class BaseDecorator
 
     @DECORATED_ASSOCIATIONS: []
 
     @decorate_association: (name)->
       @DECORATED_ASSOCIATIONS.push name
 
-    constructor: (@object)->
+    constructor: (@_object)->
       @_delegate_methods()
       @_decorate_associations()
       @after_init()
@@ -16,18 +16,23 @@ angular.module('angular_objectify_resource')
     after_init: ->
 
     _delegate_methods: ->
-      for own key, value of @object
+      for key, value of @_object
         # dont override methods of the decorator
         unless @[key]
           if angular.isFunction(value)
-            @[key] = -> @object[key]
+            closure = (local_key)->
+              -> @_object[local_key]()
           else
-            @[key] = -> @object[key]()
+            closure = (local_key)->
+              ->
+                console.log local_key
+                @_object[local_key]
+           @[key] = closure(key)
 
     _decorate_associations: ->
       for relation in @constructor.DECORATED_ASSOCIATIONS
-        continue unless @object[relation]
-        if angular.isArray @object[@relation]
-          @[relation] = _.map( @object[@relation], (element)->(element.decorator()) )
+        continue unless @_object[relation]
+        if angular.isArray @_object[relation]
+          @[relation] = _.map( @_object[relation], (element)->(element.decorator()) )
         else
-          @[relation] = @object[@relation].decorator()
+          @[relation] = @_object[relation].decorator()
