@@ -105,17 +105,13 @@
           var _this = this;
           return function(raw_object) {
             var temp;
-            temp = raw_object instanceof relation["class"] ? raw_object : _this._extend_child(raw_object, relation["class"]);
+            temp = raw_object instanceof relation["class"] ? raw_object : new relation["class"](raw_object);
+            temp._parent = _this;
             if (relation.foreign_key) {
               temp[relation.foreign_key] = _this.id;
             }
             return temp;
           };
-        };
-
-        BaseModel.prototype._extend_child = function(raw_child, klass) {
-          raw_child._parent = this;
-          return new klass(raw_child);
         };
 
         BaseModel.prototype._get_parent = function() {

@@ -72,15 +72,11 @@ angular.module('angular_objectify_resource')
         temp =  if (raw_object instanceof relation.class)
                   raw_object
                 else
-                  @_extend_child(raw_object, relation.class)
+                  new relation.class(raw_object)
 
+        temp._parent = @
         temp[relation.foreign_key] = @id if relation.foreign_key
-
         temp
-
-    _extend_child: (raw_child, klass)->
-      raw_child._parent = @
-      new klass(raw_child)
 
     _get_parent: ->
       @_parent
