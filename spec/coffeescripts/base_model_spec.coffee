@@ -2,10 +2,10 @@ describe "BaseModel", ->
 
   baseModel = subject = null
   created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT')
-  created_at_epoch = created_at.getTime() / 1000
+  created_at_string = "2013-12-04T13:24:41Z"
   object    =
     foo:  'foo'
-    created_at: created_at_epoch
+    created_at: created_at_string
     bars: [
         bar: 'bar'
     ]
@@ -39,7 +39,7 @@ describe "BaseModel", ->
         @decorator decorator
 
         beginned_at: ->
-          created_at_epoch
+          created_at_string
 
       subject = new Foo(object)
 
@@ -49,10 +49,10 @@ describe "BaseModel", ->
 
       it "convert keys finishing by _at to dates", ->
         expect(angular.isDate(subject.created_at)).toBeTruthy()
-        expect(subject.created_at).toEqual created_at
+        expect(subject.created_at).toEqual( new Date(created_at_string) )
 
       it "doesnt convert keys finishing by _at to dates when they are functions", ->
-        expect(subject.beginned_at()).toEqual created_at_epoch
+        expect(subject.beginned_at()).toEqual created_at_string
 
       it "decorator", ->
         subject.decorator()

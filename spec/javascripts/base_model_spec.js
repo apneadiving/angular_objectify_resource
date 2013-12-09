@@ -3,13 +3,13 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   describe("BaseModel", function() {
-    var baseModel, created_at, created_at_epoch, object, subject;
+    var baseModel, created_at, created_at_string, object, subject;
     baseModel = subject = null;
     created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT');
-    created_at_epoch = created_at.getTime() / 1000;
+    created_at_string = "2013-12-04T13:24:41Z";
     object = {
       foo: 'foo',
-      created_at: created_at_epoch,
+      created_at: created_at_string,
       bars: [
         {
           bar: 'bar'
@@ -82,7 +82,7 @@
           Foo.decorator(decorator);
 
           Foo.prototype.beginned_at = function() {
-            return created_at_epoch;
+            return created_at_string;
           };
 
           return Foo;
@@ -96,10 +96,10 @@
         });
         it("convert keys finishing by _at to dates", function() {
           expect(angular.isDate(subject.created_at)).toBeTruthy();
-          return expect(subject.created_at).toEqual(created_at);
+          return expect(subject.created_at).toEqual(new Date(created_at_string));
         });
         it("doesnt convert keys finishing by _at to dates when they are functions", function() {
-          return expect(subject.beginned_at()).toEqual(created_at_epoch);
+          return expect(subject.beginned_at()).toEqual(created_at_string);
         });
         return it("decorator", function() {
           subject.decorator();

@@ -55,11 +55,11 @@
           return _results;
         };
 
-        BaseModel.prototype._convert_date = function(epoch) {
-          if (!epoch || epoch === 0) {
+        BaseModel.prototype._convert_date = function(date) {
+          if (!date) {
             return null;
           }
-          return new Date(epoch * 1000);
+          return new Date(date);
         };
 
         BaseModel.prototype._extend_children = function() {

@@ -31,9 +31,9 @@ angular.module('angular_objectify_resource')
         if ! angular.isFunction(value) && utils.string_ends_with(key, '_at')
           @[key] = @_convert_date(value)
 
-    _convert_date: (epoch)->
-      return null if !epoch || epoch is 0
-      new Date(epoch * 1000)
+    _convert_date: (date)->
+      return null unless date
+      new Date(date)
 
     _extend_children: ->
       for relation in @constructor.HAS_MANY_RELATIONS
