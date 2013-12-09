@@ -8,6 +8,7 @@
     created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT');
     created_at_string = "2013-12-04T13:24:41Z";
     object = {
+      id: 'id',
       foo: 'foo',
       created_at: created_at_string,
       bars: [
@@ -72,11 +73,13 @@
           }
 
           Foo.has_many('bars', {
-            "class": Bar
+            "class": Bar,
+            foreign_key: 'foo_id'
           });
 
           Foo.has_one('baz', {
-            "class": Baz
+            "class": Baz,
+            foreign_key: 'foo_id'
           });
 
           Foo.decorator(decorator);
@@ -113,6 +116,9 @@
         it("creates has many association", function() {
           return expect(child instanceof Bar).toBeTruthy();
         });
+        it("sets foreign_key on association", function() {
+          return expect(child.foo_id).toEqual(subject.id);
+        });
         it("sets parent in children", function() {
           return expect(child._get_parent()).toBe(subject);
         });
@@ -129,6 +135,9 @@
         });
         it("creates has one association", function() {
           return expect(child instanceof Baz).toBeTruthy();
+        });
+        it("sets foreign_key on association", function() {
+          return expect(child.foo_id).toEqual(subject.id);
         });
         it("sets parent in children", function() {
           return expect(child._get_parent()).toBe(subject);

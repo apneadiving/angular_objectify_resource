@@ -41,8 +41,7 @@ angular.module('angular_objectify_resource')
         camelized_relation_name = utils.camelize(utils.singularize(relation_name))
         build_method_name = "build#{ camelized_relation_name }"
 
-        @[build_method_name] = (raw_object)=>
-          @_extend_child(raw_object, relation.class)
+        @[build_method_name] = @_build_method(relation)
 
         if @[relation_name]
           add_method_name = "add#{ camelized_relation_name }"
@@ -60,11 +59,21 @@ angular.module('angular_objectify_resource')
         build_method_name = "build#{ utils.camelize(relation_name) }"
         # example for has_one 'foo'
         # creates method buildFoo
-        @[build_method_name] = (raw_object)=>
-          @_extend_child(raw_object, relation.class)
+        @[build_method_name] = @_build_method(relation)
 
         if @[relation_name]
           @[relation_name] = @[build_method_name] @[relation_name]
+
+    _build_method: (relation)->
+      (raw_object)=>
+        temp =  if (raw_object instanceof relation.class)
+                  raw_object
+                else
+                  @_extend_child(raw_object, relation.class)
+
+        temp[relation.foreign_key] = @id if relation.foreign_key
+
+        temp
 
     _extend_child: (raw_child, klass)->
       raw_child._parent = @

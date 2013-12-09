@@ -71,9 +71,7 @@
             relation_name = relation.name;
             camelized_relation_name = utils.camelize(utils.singularize(relation_name));
             build_method_name = "build" + camelized_relation_name;
-            this[build_method_name] = function(raw_object) {
-              return _this._extend_child(raw_object, relation["class"]);
-            };
+            this[build_method_name] = this._build_method(relation);
             if (this[relation_name]) {
               add_method_name = "add" + camelized_relation_name;
               this[add_method_name] = function(raw_object) {
@@ -91,9 +89,7 @@
             relation = _ref1[_j];
             relation_name = relation.name;
             build_method_name = "build" + (utils.camelize(relation_name));
-            this[build_method_name] = function(raw_object) {
-              return _this._extend_child(raw_object, relation["class"]);
-            };
+            this[build_method_name] = this._build_method(relation);
             if (this[relation_name]) {
               _results.push(this[relation_name] = this[build_method_name](this[relation_name]));
             } else {
@@ -101,6 +97,18 @@
             }
           }
           return _results;
+        };
+
+        BaseModel.prototype._build_method = function(relation) {
+          var _this = this;
+          return function(raw_object) {
+            var temp;
+            temp = raw_object instanceof relation["class"] ? raw_object : _this._extend_child(raw_object, relation["class"]);
+            if (relation.foreign_key) {
+              temp[relation.foreign_key] = _this.id;
+            }
+            return temp;
+          };
         };
 
         BaseModel.prototype._extend_child = function(raw_child, klass) {

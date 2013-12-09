@@ -4,6 +4,7 @@ describe "BaseModel", ->
   created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT')
   created_at_string = "2013-12-04T13:24:41Z"
   object    =
+    id:   'id'
     foo:  'foo'
     created_at: created_at_string
     bars: [
@@ -34,8 +35,8 @@ describe "BaseModel", ->
       class Bar extends baseModel
       class Baz extends baseModel
       class Foo extends baseModel
-        @has_many 'bars', class: Bar
-        @has_one  'baz',  class: Baz
+        @has_many 'bars', class: Bar, foreign_key: 'foo_id'
+        @has_one  'baz',  class: Baz, foreign_key: 'foo_id'
         @decorator decorator
 
         beginned_at: ->
@@ -64,6 +65,9 @@ describe "BaseModel", ->
       it "creates has many association", ->
         expect(child instanceof Bar).toBeTruthy()
 
+      it "sets foreign_key on association", ->
+        expect(child.foo_id).toEqual subject.id
+
       it "sets parent in children", ->
         expect(child._get_parent()).toBe subject
 
@@ -78,6 +82,9 @@ describe "BaseModel", ->
 
       it "creates has one association", ->
         expect(child instanceof Baz).toBeTruthy()
+
+      it "sets foreign_key on association", ->
+        expect(child.foo_id).toEqual subject.id
 
       it "sets parent in children", ->
         expect(child._get_parent()).toBe subject
