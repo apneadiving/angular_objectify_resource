@@ -71,11 +71,24 @@ describe "BaseModel", ->
       it "sets parent in children", ->
         expect(child._get_parent()).toBe subject
 
-      it "creates method addBar", ->
-        expect(subject.addBar).toBeDefined()
-
       it "creates method buildBar", ->
         expect(subject.buildBar).toBeDefined()
+
+      describe "addBar", ->
+        bar =
+          bar:  'bar'
+          bar2: 'bar2'
+
+        it "is defined", ->
+          expect(subject.addBar).toBeDefined()
+
+        it "adds another Bar instance", ->
+          result = subject.addBar(bar)
+          expect(result instanceof Bar).toBeTruthy()
+
+        it "returns freshly created instance", ->
+          result = subject.addBar(bar)
+          expect(result).toBe subject.bars[(subject.bars.length - 1)]
 
     describe "has one", ->
       beforeEach -> child = subject.baz

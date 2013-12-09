@@ -122,11 +122,28 @@
         it("sets parent in children", function() {
           return expect(child._get_parent()).toBe(subject);
         });
-        it("creates method addBar", function() {
-          return expect(subject.addBar).toBeDefined();
-        });
-        return it("creates method buildBar", function() {
+        it("creates method buildBar", function() {
           return expect(subject.buildBar).toBeDefined();
+        });
+        return describe("addBar", function() {
+          var bar;
+          bar = {
+            bar: 'bar',
+            bar2: 'bar2'
+          };
+          it("is defined", function() {
+            return expect(subject.addBar).toBeDefined();
+          });
+          it("adds another Bar instance", function() {
+            var result;
+            result = subject.addBar(bar);
+            return expect(result instanceof Bar).toBeTruthy();
+          });
+          return it("returns freshly created instance", function() {
+            var result;
+            result = subject.addBar(bar);
+            return expect(result).toBe(subject.bars[subject.bars.length - 1]);
+          });
         });
       });
       return describe("has one", function() {

@@ -63,8 +63,7 @@
         };
 
         BaseModel.prototype._extend_children = function() {
-          var add_method_name, build_method_name, camelized_relation_name, relation, relation_name, _i, _j, _len, _len1, _ref, _ref1, _results,
-            _this = this;
+          var add_method_name, build_method_name, camelized_relation_name, relation, relation_name, that, _i, _j, _len, _len1, _ref, _ref1, _results;
           _ref = this.constructor.HAS_MANY_RELATIONS;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             relation = _ref[_i];
@@ -74,12 +73,15 @@
             this[build_method_name] = this._build_method(relation);
             if (this[relation_name]) {
               add_method_name = "add" + camelized_relation_name;
-              this[add_method_name] = function(raw_object) {
-                var object;
-                object = _this[build_method_name](raw_object);
-                _this[relation_name].push(object);
-                return object;
-              };
+              that = this;
+              this[add_method_name] = (function(local_relation_name, local_build_method_name) {
+                return function(raw_object) {
+                  var object;
+                  object = that[local_build_method_name](raw_object);
+                  that[local_relation_name].push(object);
+                  return object;
+                };
+              })(relation_name, build_method_name);
               this[relation_name] = _.map(this[relation_name], this[build_method_name]);
             }
           }

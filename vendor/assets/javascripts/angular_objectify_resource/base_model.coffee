@@ -47,10 +47,13 @@ angular.module('angular_objectify_resource')
           add_method_name = "add#{ camelized_relation_name }"
           # example for has_many 'foos'
           # creates method addFoo
-          @[add_method_name] = (raw_object)=>
-            object = @[build_method_name](raw_object)
-            @[relation_name].push object
-            object
+          that = @
+          @[add_method_name] = ((local_relation_name, local_build_method_name)->
+            (raw_object)->
+              object = that[local_build_method_name](raw_object)
+              that[local_relation_name].push object
+              object
+          )(relation_name, build_method_name)
 
           @[relation_name] = _.map @[relation_name], @[build_method_name]
 
