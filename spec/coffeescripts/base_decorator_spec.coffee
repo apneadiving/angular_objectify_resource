@@ -77,13 +77,14 @@ describe "BaseDecorator", ->
 
     describe "decorated associations", ->
 
-      it "not wrapped in functions", ->
-        expect(angular.isFunction(decorator.bars)).toBeFalsy()
-        expect(angular.isFunction(decorator.baz)).toBeFalsy()
+      it "returns decorators (has many)", ->
+        expect(decorator.bars()[0] instanceof BarDecorator).toBeTruthy()
 
-      it "returns decorators", ->
-        expect(decorator.bars[0] instanceof BarDecorator).toBeTruthy()
-        expect(decorator.baz instanceof BazDecorator).toBeTruthy()
+      it "returns decorators (has one)", ->
+        window.g = decorator
+        expect(decorator.baz() instanceof BazDecorator).toBeTruthy()
+
+
 
 
 

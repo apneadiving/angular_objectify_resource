@@ -46,7 +46,8 @@
       };
 
       BaseDecorator.prototype._decorate_associations = function() {
-        var relation, _i, _len, _ref, _results;
+        var object, relation, _i, _len, _ref, _results,
+          _this = this;
         _ref = this.constructor.DECORATED_ASSOCIATIONS;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -55,11 +56,16 @@
             continue;
           }
           if (angular.isArray(this._object[relation])) {
-            _results.push(this[relation] = _.map(this._object[relation], function(element) {
-              return element.decorator();
-            }));
+            _results.push(this[relation] = function() {
+              return _.map(_this._object[relation], function(element) {
+                return element.decorator();
+              });
+            });
           } else {
-            _results.push(this[relation] = this._object[relation].decorator());
+            object = this._object[relation];
+            _results.push(this[relation] = function() {
+              return object.decorator();
+            });
           }
         }
         return _results;

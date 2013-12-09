@@ -31,6 +31,8 @@ angular.module('angular_objectify_resource')
       for relation in @constructor.DECORATED_ASSOCIATIONS
         continue unless @_object[relation]
         if angular.isArray @_object[relation]
-          @[relation] = _.map( @_object[relation], (element)->(element.decorator()) )
+          @[relation] = =>
+            _.map @_object[relation], (element)-> element.decorator()
         else
-          @[relation] = @_object[relation].decorator()
+          object = @_object[relation]
+          @[relation] = -> object.decorator()

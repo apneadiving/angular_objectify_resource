@@ -154,13 +154,12 @@
         return expect(decorator.foo()).toEqual('bar');
       });
       return describe("decorated associations", function() {
-        it("not wrapped in functions", function() {
-          expect(angular.isFunction(decorator.bars)).toBeFalsy();
-          return expect(angular.isFunction(decorator.baz)).toBeFalsy();
+        it("returns decorators (has many)", function() {
+          return expect(decorator.bars()[0] instanceof BarDecorator).toBeTruthy();
         });
-        return it("returns decorators", function() {
-          expect(decorator.bars[0] instanceof BarDecorator).toBeTruthy();
-          return expect(decorator.baz instanceof BazDecorator).toBeTruthy();
+        return it("returns decorators (has one)", function() {
+          window.g = decorator;
+          return expect(decorator.baz() instanceof BazDecorator).toBeTruthy();
         });
       });
     });
