@@ -20,5 +20,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sprockets'
   s.add_development_dependency 'jasmine'
   s.add_development_dependency 'guard-coffeescript'
-  s.add_development_dependency 'guard-process'
 end
