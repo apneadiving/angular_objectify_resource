@@ -72,4 +72,4 @@ angular.module('angular_objectify_resource')
 
     _get_parent: ->
       @_parent
-  ]
+]
