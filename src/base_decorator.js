@@ -24,19 +24,15 @@
         for (key in _ref) {
           value = _ref[key];
           if (!this[key]) {
-            if (angular.isFunction(value)) {
-              closure = function(local_key) {
-                return function() {
-                  return this._object[local_key]();
-                };
+            closure = angular.isFunction(value) ? function(local_key) {
+              return function() {
+                return this._object[local_key]();
               };
-            } else {
-              closure = function(local_key) {
-                return function() {
-                  return this._object[local_key];
-                };
+            } : function(local_key) {
+              return function() {
+                return this._object[local_key];
               };
-            }
+            };
             _results.push(this[key] = closure(key));
           } else {
             _results.push(void 0);
@@ -46,8 +42,7 @@
       };
 
       BaseDecorator.prototype._decorate_associations = function() {
-        var object, relation, _i, _len, _ref, _results,
-          _this = this;
+        var closure, local_object, relation, _i, _len, _ref, _results;
         _ref = this.constructor.DECORATED_ASSOCIATIONS;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -55,18 +50,19 @@
           if (!this._object[relation]) {
             continue;
           }
-          if (angular.isArray(this._object[relation])) {
-            _results.push(this[relation] = function() {
-              return _.map(_this._object[relation], function(element) {
+          local_object = this._object;
+          closure = angular.isArray(this._object[relation]) ? function(local_relation) {
+            return function() {
+              return _.map(local_object[local_relation], function(element) {
                 return element.decorator();
               });
-            });
-          } else {
-            object = this._object[relation];
-            _results.push(this[relation] = function() {
-              return object.decorator();
-            });
-          }
+            };
+          } : function(local_relation) {
+            return function() {
+              return local_object[local_relation].decorator();
+            };
+          };
+          _results.push(this[relation] = closure(relation));
         }
         return _results;
       };
