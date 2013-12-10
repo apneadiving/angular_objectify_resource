@@ -69,8 +69,8 @@ angular.module('angular_objectify_resource')
 
     _build_method: (relation)->
       (raw_object)=>
-        temp._parent = @
-        temp[relation.foreign_key] = @id if relation.foreign_key
+        raw_object._parent = @
+        raw_object[relation.foreign_key] = @id if relation.foreign_key
         temp =  if (raw_object instanceof relation.class)
                   raw_object
                 else
