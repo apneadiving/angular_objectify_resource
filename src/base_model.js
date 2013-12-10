@@ -105,11 +105,11 @@
           var _this = this;
           return function(raw_object) {
             var temp;
-            temp = raw_object instanceof relation["class"] ? raw_object : new relation["class"](raw_object);
             temp._parent = _this;
             if (relation.foreign_key) {
               temp[relation.foreign_key] = _this.id;
             }
+            temp = raw_object instanceof relation["class"] ? raw_object : new relation["class"](raw_object);
             return temp;
           };
         };
