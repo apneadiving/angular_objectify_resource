@@ -11,7 +11,9 @@
 #   - dist/**/*.js
 #
 src_files:
-    - 'src/dependencies/*.js'
+    - 'src/dependencies/angular.js'
+    - 'src/dependencies/angular_mock.js'
+    - 'src/dependencies/underscore.js'
     - 'src/*.js'
 
 # stylesheets
