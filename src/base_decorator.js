@@ -24,16 +24,16 @@
         for (key in _ref) {
           value = _ref[key];
           if (!this[key]) {
-            closure = angular.isFunction(value) ? function(local_key) {
+            closure = angular.isFunction(value) ? function(local_object, local_key) {
               return function() {
-                return this._object[local_key]();
+                return local_object[local_key]();
               };
-            } : function(local_key) {
+            } : function(local_object, local_key) {
               return function() {
-                return this._object[local_key];
+                return local_object[local_key];
               };
             };
-            _results.push(this[key] = closure(key));
+            _results.push(this[key] = closure(this._object, key));
           } else {
             _results.push(void 0);
           }
@@ -42,7 +42,7 @@
       };
 
       BaseDecorator.prototype._decorate_associations = function() {
-        var closure, local_object, relation, _i, _len, _ref, _results;
+        var closure, relation, _i, _len, _ref, _results;
         _ref = this.constructor.DECORATED_ASSOCIATIONS;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -50,19 +50,18 @@
           if (!this._object[relation]) {
             continue;
           }
-          local_object = this._object;
-          closure = angular.isArray(this._object[relation]) ? function(local_relation) {
+          closure = angular.isArray(this._object[relation]) ? function(local_object, local_relation) {
             return function() {
               return _.map(local_object[local_relation], function(element) {
                 return element.decorator();
               });
             };
-          } : function(local_relation) {
+          } : function(local_object, local_relation) {
             return function() {
               return local_object[local_relation].decorator();
             };
           };
-          _results.push(this[relation] = closure(relation));
+          _results.push(this[relation] = closure(this._object, relation));
         }
         return _results;
       };

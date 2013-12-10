@@ -20,22 +20,21 @@ angular.module('angular_objectify_resource')
         # dont override methods of the decorator
         unless @[key]
           closure = if angular.isFunction(value)
-                      (local_key)->
-                        -> @_object[local_key]()
+                      (local_object, local_key)->
+                        -> local_object[local_key]()
                     else
-                      (local_key)->
-                        -> @_object[local_key]
-          @[key] = closure(key)
+                      (local_object, local_key)->
+                        -> local_object[local_key]
+          @[key] = closure(@_object, key)
 
     _decorate_associations: ->
       for relation in @constructor.DECORATED_ASSOCIATIONS
         continue unless @_object[relation]
-        local_object = @_object
         closure = if angular.isArray @_object[relation]
-                    (local_relation)->
+                    (local_object, local_relation)->
                       ->
                         _.map local_object[local_relation], (element)-> element.decorator()
                   else
-                    (local_relation)->
+                    (local_object, local_relation)->
                       -> local_object[local_relation].decorator()
-        @[relation] = closure(relation)
+        @[relation] = closure(@_object, relation)
