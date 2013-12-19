@@ -2,3 +2,7 @@
 {<img src="https://secure.travis-ci.org/apneadiving/angular_objectify_resource.png?branch=master" alt="Build Status" />}[http://travis-ci.org/apneadiving/angular_objectify_resource]
 
 This project rocks and uses MIT-LICENSE.
+
+== Dependencies
+
+* moment.js

@@ -33,7 +33,7 @@ angular.module('angular_objectify_resource')
 
     _convert_date: (date)->
       return null unless date
-      new Date(date)
+      moment(date, 'YYYY-MM-DDTHH:mm:ssZZ').toDate()
 
     _extend_children: ->
       for relation in @constructor.HAS_MANY_RELATIONS

@@ -59,7 +59,7 @@
           if (!date) {
             return null;
           }
-          return new Date(date);
+          return moment(date, 'YYYY-MM-DDTHH:mm:ssZZ').toDate();
         };
 
         BaseModel.prototype._extend_children = function() {

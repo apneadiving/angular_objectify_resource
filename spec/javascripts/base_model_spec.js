@@ -6,7 +6,7 @@
     var baseModel, created_at, created_at_string, object, subject;
     baseModel = subject = null;
     created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT');
-    created_at_string = "2013-12-04T13:24:41Z";
+    created_at_string = "2013-12-16T15:31:53+0000";
     object = {
       id: 'id',
       foo: 'foo',
@@ -99,7 +99,7 @@
         });
         it("convert keys finishing by _at to dates", function() {
           expect(angular.isDate(subject.created_at)).toBeTruthy();
-          return expect(subject.created_at).toEqual(new Date(created_at_string));
+          return expect(subject.created_at).toEqual(moment(created_at_string, 'YYYY-MM-DDTHH:mm:ssZZ').toDate());
         });
         it("doesnt convert keys finishing by _at to dates when they are functions", function() {
           return expect(subject.beginned_at()).toEqual(created_at_string);

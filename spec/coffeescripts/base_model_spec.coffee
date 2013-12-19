@@ -2,7 +2,7 @@ describe "BaseModel", ->
 
   baseModel = subject = null
   created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT')
-  created_at_string = "2013-12-04T13:24:41Z"
+  created_at_string = "2013-12-16T15:31:53+0000"
   object    =
     id:   'id'
     foo:  'foo'
@@ -50,7 +50,7 @@ describe "BaseModel", ->
 
       it "convert keys finishing by _at to dates", ->
         expect(angular.isDate(subject.created_at)).toBeTruthy()
-        expect(subject.created_at).toEqual( new Date(created_at_string) )
+        expect(subject.created_at).toEqual( moment(created_at_string, 'YYYY-MM-DDTHH:mm:ssZZ').toDate() )
 
       it "doesnt convert keys finishing by _at to dates when they are functions", ->
         expect(subject.beginned_at()).toEqual created_at_string
