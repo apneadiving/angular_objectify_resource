@@ -39,7 +39,7 @@ describe "BaseModel", ->
         @has_many 'bars', class: Bar, foreign_key: 'foo_id'
         @has_one  'baz',  class: Baz, foreign_key: 'foo_id'
         @decorator decorator
-        @skip_date_conversion 'skipped_created_at', 'skipped2_created_at'
+        @skip_date_conversion 'skipped_created_at'
 
         beginned_at: ->
           created_at_string

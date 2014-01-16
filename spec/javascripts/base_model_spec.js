@@ -85,7 +85,7 @@
 
           Foo.decorator(decorator);
 
-          Foo.skip_date_conversion('skipped_created_at', 'skipped2_created_at');
+          Foo.skip_date_conversion('skipped_created_at');
 
           Foo.prototype.beginned_at = function() {
             return created_at_string;
