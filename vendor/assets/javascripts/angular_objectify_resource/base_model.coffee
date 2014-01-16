@@ -17,9 +17,12 @@ angular.module('angular_objectify_resource')
 
     constructor: (resource)->
       angular.extend(@, resource)
+      @before_init()
       @_extend_children()
       @_convert_dates()
       @after_init()
+
+    before_init: ->
 
     after_init: ->
 
