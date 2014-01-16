@@ -1,5 +1,6 @@
 (function() {
-  var __hasProp = {}.hasOwnProperty;
+  var __slice = [].slice,
+    __hasProp = {}.hasOwnProperty;
 
   angular.module('angular_objectify_resource').factory('aor.BaseModel', [
     'aor.utils', function(utils) {
@@ -8,6 +9,8 @@
         BaseModel.HAS_ONE_RELATIONS = [];
 
         BaseModel.HAS_MANY_RELATIONS = [];
+
+        BaseModel.SKIP_DATE_CONVERSION = [];
 
         BaseModel.DECORATOR = void 0;
 
@@ -27,12 +30,21 @@
           return this.DECORATOR = klass;
         };
 
+        BaseModel.skip_date_conversion = function() {
+          var keys;
+          keys = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+          return this.SKIP_DATE_CONVERSION = keys;
+        };
+
         function BaseModel(resource) {
           angular.extend(this, resource);
+          this.before_init();
           this._extend_children();
           this._convert_dates();
           this.after_init();
         }
+
+        BaseModel.prototype.before_init = function() {};
 
         BaseModel.prototype.after_init = function() {};
 
@@ -46,7 +58,7 @@
           for (key in this) {
             if (!__hasProp.call(this, key)) continue;
             value = this[key];
-            if (!angular.isFunction(value) && utils.string_ends_with(key, '_at')) {
+            if (this._is_date_to_convert(key, value)) {
               _results.push(this[key] = this._convert_date(value));
             } else {
               _results.push(void 0);
@@ -60,6 +72,12 @@
             return null;
           }
           return moment(date, 'YYYY-MM-DDTHH:mm:ssZZ').toDate();
+        };
+
+        BaseModel.prototype._convert_date_to_time_zone = function(date, local_offset_in_seconds) {
+          date = this._convert_date(date);
+          date.setSeconds(date.getSeconds() + local_offset_in_seconds);
+          return date;
         };
 
         BaseModel.prototype._extend_children = function() {
@@ -112,6 +130,10 @@
             temp = raw_object instanceof relation["class"] ? raw_object : new relation["class"](raw_object);
             return temp;
           };
+        };
+
+        BaseModel.prototype._is_date_to_convert = function(key, value) {
+          return !angular.isFunction(value) && utils.string_ends_with(key, '_at') && !_.contains(this.constructor.SKIP_DATE_CONVERSION, key);
         };
 
         BaseModel.prototype._get_parent = function() {

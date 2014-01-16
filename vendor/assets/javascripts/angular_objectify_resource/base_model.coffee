@@ -4,6 +4,8 @@ angular.module('angular_objectify_resource')
   class BaseModel
     @HAS_ONE_RELATIONS:  []
     @HAS_MANY_RELATIONS: []
+    @SKIP_DATE_CONVERSION: []
+
     @DECORATOR: undefined
 
     @has_many: (name, options)->
@@ -14,6 +16,9 @@ angular.module('angular_objectify_resource')
 
     @decorator: (klass)->
       @DECORATOR = klass
+
+    @skip_date_conversion: (keys...)->
+      @SKIP_DATE_CONVERSION = keys
 
     constructor: (resource)->
       angular.extend(@, resource)
@@ -31,18 +36,16 @@ angular.module('angular_objectify_resource')
 
     _convert_dates: ->
       for own key, value of @
-        if ! angular.isFunction(value) && utils.string_ends_with(key, '_at')
-          @[key] = @_convert_date(value)
+        @[key] = @_convert_date(value) if @_is_date_to_convert(key, value)
 
     _convert_date: (date)->
       return null unless date
       moment(date, 'YYYY-MM-DDTHH:mm:ssZZ').toDate()
 
     _convert_date_to_time_zone: (date, local_offset_in_seconds)->
-      ->
-        date = @_convert_date(date)
-        date.setSeconds(date.getSeconds() + local_offset_in_seconds)
-        date
+      date = @_convert_date(date)
+      date.setSeconds(date.getSeconds() + local_offset_in_seconds)
+      date
 
     _extend_children: ->
       for relation in @constructor.HAS_MANY_RELATIONS
@@ -85,6 +88,11 @@ angular.module('angular_objectify_resource')
                 else
                   new relation.class(raw_object)
         temp
+
+    _is_date_to_convert: (key, value)->
+      ! angular.isFunction(value) &&
+      utils.string_ends_with(key, '_at') &&
+      !_.contains(@constructor.SKIP_DATE_CONVERSION, key)
 
     _get_parent: ->
       @_parent

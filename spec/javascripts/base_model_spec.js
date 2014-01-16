@@ -11,6 +11,7 @@
       id: 'id',
       foo: 'foo',
       created_at: created_at_string,
+      skipped_created_at: created_at_string,
       bars: [
         {
           bar: 'bar'
@@ -84,6 +85,8 @@
 
           Foo.decorator(decorator);
 
+          Foo.skip_date_conversion('skipped_created_at', 'skipped2_created_at');
+
           Foo.prototype.beginned_at = function() {
             return created_at_string;
           };
@@ -103,6 +106,9 @@
         });
         it("doesnt convert keys finishing by _at to dates when they are functions", function() {
           return expect(subject.beginned_at()).toEqual(created_at_string);
+        });
+        it("doesnt convert keys finishing by _at when explicitly skipped", function() {
+          return expect(subject.skipped_created_at).toEqual(created_at_string);
         });
         return it("decorator", function() {
           subject.decorator();

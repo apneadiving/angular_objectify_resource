@@ -6,7 +6,8 @@ describe "BaseModel", ->
   object    =
     id:   'id'
     foo:  'foo'
-    created_at: created_at_string
+    created_at:         created_at_string
+    skipped_created_at:  created_at_string
     bars: [
         bar: 'bar'
     ]
@@ -38,6 +39,7 @@ describe "BaseModel", ->
         @has_many 'bars', class: Bar, foreign_key: 'foo_id'
         @has_one  'baz',  class: Baz, foreign_key: 'foo_id'
         @decorator decorator
+        @skip_date_conversion 'skipped_created_at', 'skipped2_created_at'
 
         beginned_at: ->
           created_at_string
@@ -54,6 +56,9 @@ describe "BaseModel", ->
 
       it "doesnt convert keys finishing by _at to dates when they are functions", ->
         expect(subject.beginned_at()).toEqual created_at_string
+
+      it "doesnt convert keys finishing by _at when explicitly skipped", ->
+        expect(subject.skipped_created_at).toEqual created_at_string
 
       it "decorator", ->
         subject.decorator()
@@ -104,3 +109,4 @@ describe "BaseModel", ->
 
       it "creates method buildBaz", ->
         expect(subject.buildBaz).toBeDefined()
+
