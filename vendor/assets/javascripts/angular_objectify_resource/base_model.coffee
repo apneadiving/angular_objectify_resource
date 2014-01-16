@@ -38,6 +38,12 @@ angular.module('angular_objectify_resource')
       return null unless date
       moment(date, 'YYYY-MM-DDTHH:mm:ssZZ').toDate()
 
+    _convert_date_to_time_zone: (date, local_offset_in_seconds)->
+      ->
+        date = @_convert_date(date)
+        date.setSeconds(date.getSeconds() + local_offset_in_seconds)
+        date
+
     _extend_children: ->
       for relation in @constructor.HAS_MANY_RELATIONS
         relation_name = relation.name
