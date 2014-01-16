@@ -90,7 +90,7 @@ angular.module('angular_objectify_resource')
         temp
 
     _is_date_to_convert: (key, value)->
-      ! angular.isFunction(value) &&
+      angular.isString(value) &&
       utils.string_ends_with(key, '_at') &&
       !_.contains(@constructor.SKIP_DATE_CONVERSION, key)
 

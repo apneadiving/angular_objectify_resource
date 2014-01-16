@@ -133,7 +133,7 @@
         };
 
         BaseModel.prototype._is_date_to_convert = function(key, value) {
-          return !angular.isFunction(value) && utils.string_ends_with(key, '_at') && !_.contains(this.constructor.SKIP_DATE_CONVERSION, key);
+          return angular.isString(value) && utils.string_ends_with(key, '_at') && !_.contains(this.constructor.SKIP_DATE_CONVERSION, key);
         };
 
         BaseModel.prototype._get_parent = function() {
