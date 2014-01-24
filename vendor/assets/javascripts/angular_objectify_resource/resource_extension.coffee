@@ -15,10 +15,10 @@ angular.module('angular_objectify_resource')
           else
             resource
 
-      build_nested_collection: (callback)->
+      build_nested_collection: (callback, special_options = {})->
         that = @
         (response)->
-          namespace  = options.namespace
+          namespace  = special_options.namespace || options.namespace
           isArray    = angular.isArray(response)
           collection = if isArray then response else response[namespace]
           resources  = _.map collection, that.resource_build_method
