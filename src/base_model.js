@@ -6,21 +6,19 @@
     'aor.utils', function(utils) {
       var BaseModel;
       return BaseModel = (function() {
-        BaseModel.HAS_ONE_RELATIONS = [];
-
-        BaseModel.HAS_MANY_RELATIONS = [];
-
-        BaseModel.SKIP_DATE_CONVERSION = [];
-
-        BaseModel.DECORATOR = void 0;
-
         BaseModel.has_many = function(name, options) {
+          if (this.HAS_MANY_RELATIONS == null) {
+            this.HAS_MANY_RELATIONS = [];
+          }
           return this.HAS_MANY_RELATIONS.push(angular.extend({
             name: name
           }, options));
         };
 
         BaseModel.has_one = function(name, options) {
+          if (this.HAS_ONE_RELATIONS == null) {
+            this.HAS_ONE_RELATIONS = [];
+          }
           return this.HAS_ONE_RELATIONS.push(angular.extend({
             name: name
           }, options));
@@ -81,7 +79,10 @@
         };
 
         BaseModel.prototype._extend_children = function() {
-          var add_method_name, build_method_name, camelized_relation_name, relation, relation_name, that, _i, _j, _len, _len1, _ref, _ref1, _results;
+          var add_method_name, build_method_name, camelized_relation_name, relation, relation_name, that, _base, _base1, _i, _j, _len, _len1, _ref, _ref1, _results;
+          if ((_base = this.constructor).HAS_MANY_RELATIONS == null) {
+            _base.HAS_MANY_RELATIONS = [];
+          }
           _ref = this.constructor.HAS_MANY_RELATIONS;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             relation = _ref[_i];
@@ -102,6 +103,9 @@
               })(relation_name, build_method_name);
               this[relation_name] = _.map(this[relation_name], this[build_method_name]);
             }
+          }
+          if ((_base1 = this.constructor).HAS_ONE_RELATIONS == null) {
+            _base1.HAS_ONE_RELATIONS = [];
           }
           _ref1 = this.constructor.HAS_ONE_RELATIONS;
           _results = [];

@@ -16,12 +16,15 @@
               }
             };
           },
-          build_nested_collection: function(callback) {
+          build_nested_collection: function(callback, special_options) {
             var that;
+            if (special_options == null) {
+              special_options = {};
+            }
             that = this;
             return function(response) {
               var collection, isArray, namespace, resources;
-              namespace = options.namespace;
+              namespace = special_options.namespace || options.namespace;
               isArray = angular.isArray(response);
               collection = isArray ? response : response[namespace];
               resources = _.map(collection, that.resource_build_method);

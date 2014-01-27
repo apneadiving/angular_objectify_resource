@@ -2,9 +2,10 @@
   angular.module('angular_objectify_resource').factory('aor.BaseDecorator', function() {
     var BaseDecorator;
     return BaseDecorator = (function() {
-      BaseDecorator.DECORATED_ASSOCIATIONS = [];
-
       BaseDecorator.decorate_association = function(name) {
+        if (this.DECORATED_ASSOCIATIONS == null) {
+          this.DECORATED_ASSOCIATIONS = [];
+        }
         return this.DECORATED_ASSOCIATIONS.push(name);
       };
 
@@ -42,7 +43,10 @@
       };
 
       BaseDecorator.prototype._decorate_associations = function() {
-        var closure, relation, _i, _len, _ref, _results;
+        var closure, relation, _base, _i, _len, _ref, _results;
+        if ((_base = this.constructor).DECORATED_ASSOCIATIONS == null) {
+          _base.DECORATED_ASSOCIATIONS = [];
+        }
         _ref = this.constructor.DECORATED_ASSOCIATIONS;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {

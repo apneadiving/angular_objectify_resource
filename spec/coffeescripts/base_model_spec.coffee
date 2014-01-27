@@ -64,6 +64,13 @@ describe "BaseModel", ->
         subject.decorator()
         expect(decorator).toHaveBeenCalledWith(subject)
 
+    describe "inheritance limits", ->
+      it "base class not spoiled by children (has_many)", ->
+        expect(baseModel.HAS_ONE_RELATIONS).toBeUndefined()
+        expect(Bar.HAS_ONE_RELATIONS.length).toEqual 0
+        expect(Baz.HAS_ONE_RELATIONS.length).toEqual 0
+        expect(Foo.HAS_ONE_RELATIONS.length).toEqual 1
+
     describe "has many", ->
       beforeEach -> child = subject.bars[0]
 

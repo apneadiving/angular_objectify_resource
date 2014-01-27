@@ -2,16 +2,13 @@ angular.module('angular_objectify_resource')
 
 .factory 'aor.BaseModel', ['aor.utils', (utils)->
   class BaseModel
-    @HAS_ONE_RELATIONS:  []
-    @HAS_MANY_RELATIONS: []
-    @SKIP_DATE_CONVERSION: []
-
-    @DECORATOR: undefined
 
     @has_many: (name, options)->
+      @HAS_MANY_RELATIONS ?= []
       @HAS_MANY_RELATIONS.push(angular.extend({ name: name }, options))
 
     @has_one: (name, options)->
+      @HAS_ONE_RELATIONS ?= []
       @HAS_ONE_RELATIONS.push(angular.extend({ name: name }, options))
 
     @decorator: (klass)->
@@ -48,6 +45,7 @@ angular.module('angular_objectify_resource')
       date
 
     _extend_children: ->
+      @constructor.HAS_MANY_RELATIONS ?= []
       for relation in @constructor.HAS_MANY_RELATIONS
         relation_name = relation.name
         camelized_relation_name = utils.camelize(utils.singularize(relation_name))
@@ -69,6 +67,7 @@ angular.module('angular_objectify_resource')
 
           @[relation_name] = _.map @[relation_name], @[build_method_name]
 
+      @constructor.HAS_ONE_RELATIONS ?= []
       for relation in @constructor.HAS_ONE_RELATIONS
         relation_name     = relation.name
         build_method_name = "build#{ utils.camelize(relation_name) }"

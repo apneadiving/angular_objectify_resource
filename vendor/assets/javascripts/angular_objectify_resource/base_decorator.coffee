@@ -3,9 +3,8 @@ angular.module('angular_objectify_resource')
 .factory 'aor.BaseDecorator', ->
   class BaseDecorator
 
-    @DECORATED_ASSOCIATIONS: []
-
     @decorate_association: (name)->
+      @DECORATED_ASSOCIATIONS ?= []
       @DECORATED_ASSOCIATIONS.push name
 
     constructor: (@_object)->
@@ -28,6 +27,7 @@ angular.module('angular_objectify_resource')
           @[key] = closure(@_object, key)
 
     _decorate_associations: ->
+      @constructor.DECORATED_ASSOCIATIONS ?= []
       for relation in @constructor.DECORATED_ASSOCIATIONS
         continue unless @_object[relation]
         closure = if angular.isArray @_object[relation]

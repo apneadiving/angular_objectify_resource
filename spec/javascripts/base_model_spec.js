@@ -115,6 +115,14 @@
           return expect(decorator).toHaveBeenCalledWith(subject);
         });
       });
+      describe("inheritance limits", function() {
+        return it("base class not spoiled by children (has_many)", function() {
+          expect(baseModel.HAS_ONE_RELATIONS).toBeUndefined();
+          expect(Bar.HAS_ONE_RELATIONS.length).toEqual(0);
+          expect(Baz.HAS_ONE_RELATIONS.length).toEqual(0);
+          return expect(Foo.HAS_ONE_RELATIONS.length).toEqual(1);
+        });
+      });
       describe("has many", function() {
         beforeEach(function() {
           return child = subject.bars[0];
