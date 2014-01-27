@@ -64,15 +64,14 @@ describe "BaseModel", ->
         subject.decorator()
         expect(decorator).toHaveBeenCalledWith(subject)
 
-    describe "inheritance limits", ->
-      it "base class not spoiled by children (has_many)", ->
-        expect(baseModel.HAS_ONE_RELATIONS).toBeUndefined()
-        expect(Bar.HAS_ONE_RELATIONS.length).toEqual 0
-        expect(Baz.HAS_ONE_RELATIONS.length).toEqual 0
-        expect(Foo.HAS_ONE_RELATIONS.length).toEqual 1
-
     describe "has many", ->
       beforeEach -> child = subject.bars[0]
+
+      it "base class not spoiled by children", ->
+        expect(baseModel.HAS_MANY_RELATIONS).toBeUndefined()
+        expect(Bar.HAS_MANY_RELATIONS.length).toEqual 0
+        expect(Baz.HAS_MANY_RELATIONS.length).toEqual 0
+        expect(Foo.HAS_MANY_RELATIONS.length).toEqual 1
 
       it "creates has many association", ->
         expect(child instanceof Bar).toBeTruthy()
@@ -104,6 +103,12 @@ describe "BaseModel", ->
 
     describe "has one", ->
       beforeEach -> child = subject.baz
+
+      it "base class not spoiled by children", ->
+        expect(baseModel.HAS_ONE_RELATIONS).toBeUndefined()
+        expect(Bar.HAS_ONE_RELATIONS.length).toEqual 0
+        expect(Baz.HAS_ONE_RELATIONS.length).toEqual 0
+        expect(Foo.HAS_ONE_RELATIONS.length).toEqual 1
 
       it "creates has one association", ->
         expect(child instanceof Baz).toBeTruthy()

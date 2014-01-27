@@ -115,17 +115,15 @@
           return expect(decorator).toHaveBeenCalledWith(subject);
         });
       });
-      describe("inheritance limits", function() {
-        return it("base class not spoiled by children (has_many)", function() {
-          expect(baseModel.HAS_ONE_RELATIONS).toBeUndefined();
-          expect(Bar.HAS_ONE_RELATIONS.length).toEqual(0);
-          expect(Baz.HAS_ONE_RELATIONS.length).toEqual(0);
-          return expect(Foo.HAS_ONE_RELATIONS.length).toEqual(1);
-        });
-      });
       describe("has many", function() {
         beforeEach(function() {
           return child = subject.bars[0];
+        });
+        it("base class not spoiled by children", function() {
+          expect(baseModel.HAS_MANY_RELATIONS).toBeUndefined();
+          expect(Bar.HAS_MANY_RELATIONS.length).toEqual(0);
+          expect(Baz.HAS_MANY_RELATIONS.length).toEqual(0);
+          return expect(Foo.HAS_MANY_RELATIONS.length).toEqual(1);
         });
         it("creates has many association", function() {
           return expect(child instanceof Bar).toBeTruthy();
@@ -163,6 +161,12 @@
       return describe("has one", function() {
         beforeEach(function() {
           return child = subject.baz;
+        });
+        it("base class not spoiled by children", function() {
+          expect(baseModel.HAS_ONE_RELATIONS).toBeUndefined();
+          expect(Bar.HAS_ONE_RELATIONS.length).toEqual(0);
+          expect(Baz.HAS_ONE_RELATIONS.length).toEqual(0);
+          return expect(Foo.HAS_ONE_RELATIONS.length).toEqual(1);
         });
         it("creates has one association", function() {
           return expect(child instanceof Baz).toBeTruthy();
