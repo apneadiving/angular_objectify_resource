@@ -48,13 +48,16 @@ angular.module('angular_objectify_resource')
       else
         on_success = args[0] if_.isFunction(args[0])
         on_error   = args[1] if_.isFunction(args[2])
-      if @id
+      if @_is_persisted()
         @_resource.update(params, on_success, on_error)
       else
         @_resource.create(params, on_success, on_error)
 
     destroy: (on_success, on_error)->
       @_resource.destroy(@toParams(), on_success, on_error)
+
+    _is_persisted: ->
+      _.has(@, 'id')
 
     _convert_dates: ->
       for own key, value of @
