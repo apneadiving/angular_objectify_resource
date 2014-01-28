@@ -25,6 +25,6 @@ angular.module('angular_objectify_resource').factory 'aor.utils', ->
         result.params = args_array[0]
         index_offset = 1
 
-      result.on_success = args[index_offset] if _.isFunction(args[index_offset + 1])
-      result.on_error   = args[index_offset] if _.isFunction(args[index_offset + 1])
+      result.on_success = args_array[index_offset] if _.isFunction(args_array[index_offset + 1])
+      result.on_error   = args_array[index_offset] if _.isFunction(args_array[index_offset + 1])
       result
