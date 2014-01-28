@@ -50,6 +50,17 @@
           return this._decorator != null ? this._decorator : this._decorator = new this.constructor.DECORATOR(this);
         };
 
+        BaseModel.prototype.toParams = function() {
+          var result;
+          result = {};
+          _.forIn(this, function(key, value) {
+            if (!(utils.string_starts_with('_') || angular.isFunction(that))) {
+              return result[key] = value;
+            }
+          });
+          return result;
+        };
+
         BaseModel.prototype._convert_dates = function() {
           var key, value, _results;
           _results = [];

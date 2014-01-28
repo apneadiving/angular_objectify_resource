@@ -13,7 +13,7 @@
 src_files:
   - 'src/dependencies/angular.js'
   - 'src/dependencies/angular_mock.js'
-  - 'src/dependencies/underscore.js'
+  - 'src/dependencies/lodash.js'
   - 'src/dependencies/moment.min.js'
   - 'src/base.js'
   - 'src/*.js'

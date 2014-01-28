@@ -31,6 +31,12 @@ angular.module('angular_objectify_resource')
     decorator: ->
       @_decorator ?= new (@constructor.DECORATOR)(@)
 
+    toParams: ->
+      result = {}
+      _.forIn @, (key, value)->
+        result[key] = value unless utils.string_starts_with('_') || angular.isFunction(that)
+      result
+
     _convert_dates: ->
       for own key, value of @
         @[key] = @_convert_date(value) if @_is_date_to_convert(key, value)
