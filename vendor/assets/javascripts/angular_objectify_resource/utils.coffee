@@ -14,7 +14,11 @@ angular.module('angular_objectify_resource').factory 'aor.utils', ->
       string.substring(0, string.length - 1)
 
     extract_params: (args_array)->
-      result = {params: {}, on_error: ->(), on_success: ->()}
+      result =
+        params:     {}
+        on_error:   ->
+        on_success: ->
+
       index_offset = 0
 
       if _.isObject(args_array[0])

@@ -63,28 +63,27 @@
         };
 
         BaseModel.prototype.save = function() {
-          var args, on_error, on_success, params;
+          var args, argz, params;
           args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-          params = this.toParams();
-          on_success = function() {};
-          on_error = function() {};
-          if (_.isObject(args[0])) {
-            _.extend(params, args[0]);
-            on_success = args[1](if_.isFunction(args[1]));
-            on_error = args[2](if_.isFunction(args[2]));
+          argz = utils.extract_params(args);
+          params = _.extend(this.toParams(), argz.params);
+          if (this._is_persisted()) {
+            return this._resource.update(params, argz.on_success, argz.on_error);
           } else {
-            on_success = args[0](if_.isFunction(args[0]));
-            on_error = args[1](if_.isFunction(args[2]));
-          }
-          if (this.id) {
-            return this._resource.update(params, on_success, on_error);
-          } else {
-            return this._resource.create(params, on_success, on_error);
+            return this._resource.create(params, argz.on_success, argz.on_error);
           }
         };
 
-        BaseModel.prototype.destroy = function(on_success, on_error) {
-          return this._resource.destroy(this.toParams(), on_success, on_error);
+        BaseModel.prototype.destroy = function() {
+          var args, argz, params;
+          args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+          argz = utils.extract_params(args);
+          params = _.extend(this.toParams(), argz.params);
+          return this._resource.destroy(params, argz.on_success, argz.on_error);
+        };
+
+        BaseModel.prototype._is_persisted = function() {
+          return _.has(this, 'id');
         };
 
         BaseModel.prototype._convert_dates = function() {

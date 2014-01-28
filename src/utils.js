@@ -18,6 +18,26 @@
       },
       singularize: function(string) {
         return string.substring(0, string.length - 1);
+      },
+      extract_params: function(args_array) {
+        var index_offset, result;
+        result = {
+          params: {},
+          on_error: function() {},
+          on_success: function() {}
+        };
+        index_offset = 0;
+        if (_.isObject(args_array[0])) {
+          result.params = args_array[0];
+          index_offset = 1;
+        }
+        if (_.isFunction(args[index_offset + 1])) {
+          result.on_success = args[index_offset];
+        }
+        if (_.isFunction(args[index_offset + 1])) {
+          result.on_error = args[index_offset];
+        }
+        return result;
       }
     };
   });
