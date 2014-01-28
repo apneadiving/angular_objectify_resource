@@ -33,7 +33,7 @@ angular.module('angular_objectify_resource')
 
     toParams: ->
       result = {}
-      _.forIn @, (key, value)->
+      _.forIn @, (value, key)->
         result[key] = value unless utils.string_starts_with(key, '_') || angular.isFunction(value)
       result
 
