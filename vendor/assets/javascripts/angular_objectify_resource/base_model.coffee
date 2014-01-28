@@ -34,7 +34,7 @@ angular.module('angular_objectify_resource')
     toParams: ->
       result = {}
       _.forIn @, (key, value)->
-        result[key] = value unless utils.string_starts_with('_') || angular.isFunction(that)
+        result[key] = value unless utils.string_starts_with(key, '_') || angular.isFunction(value)
       result
 
     _convert_dates: ->
