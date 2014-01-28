@@ -4,10 +4,13 @@ describe "ResourceExtension", ->
   resource = jasmine.createSpy('resource')
   response = jasmine.createSpy('response')
   klass    = jasmine.createSpy('model')
+  resource = jasmine.createSpy('resource')
   callback = jasmine.createSpy('callback')
   options  =
     model:     klass
     namespace: 'foos'
+    resource:  resource
+  dependency = null
 
   beforeEach module('angular_objectify_resource')
 
@@ -19,7 +22,7 @@ describe "ResourceExtension", ->
   describe "resource_build_method", ->
     it "calls expected class", ->
       service.resource_build_method(resource)
-      expect(klass).toHaveBeenCalledWith(resource)
+      expect(klass).toHaveBeenCalledWith(resource, resource)
 
   describe "build_object", ->
     beforeEach -> spyOn(service, 'resource_build_method').andReturn(resource)
@@ -68,6 +71,3 @@ describe "ResourceExtension", ->
       it "returns expected result", ->
         result = action()
         expect(result.foos).toEqual [resource]
-
-
-

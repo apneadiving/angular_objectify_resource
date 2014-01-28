@@ -1,19 +1,21 @@
 (function() {
   describe("ResourceExtension", function() {
-    var callback, klass, options, resource, response, service, subject;
+    var callback, dependency, klass, options, resource, response, service, subject;
     subject = service = null;
     resource = jasmine.createSpy('resource');
     response = jasmine.createSpy('response');
     klass = jasmine.createSpy('model');
+    resource = jasmine.createSpy('resource');
     callback = jasmine.createSpy('callback');
     options = {
       model: klass,
-      namespace: 'foos'
+      namespace: 'foos',
+      resource: resource
     };
+    dependency = null;
     beforeEach(module('angular_objectify_resource'));
     beforeEach(function() {
       return inject(function($injector) {
-        var dependency;
         dependency = $injector.get('aor.ResourceExtension');
         return service = dependency.get(options);
       });
@@ -21,7 +23,7 @@
     describe("resource_build_method", function() {
       return it("calls expected class", function() {
         service.resource_build_method(resource);
-        return expect(klass).toHaveBeenCalledWith(resource);
+        return expect(klass).toHaveBeenCalledWith(resource, resource);
       });
     });
     describe("build_object", function() {

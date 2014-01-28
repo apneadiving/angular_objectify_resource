@@ -42,7 +42,7 @@
             };
           },
           resource_build_method: function(resource) {
-            return new options.model(resource);
+            return new options.model(resource, options.resource);
           }
         };
       }

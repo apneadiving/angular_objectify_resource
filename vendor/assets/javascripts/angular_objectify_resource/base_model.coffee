@@ -17,7 +17,7 @@ angular.module('angular_objectify_resource')
     @skip_date_conversion: (keys...)->
       @SKIP_DATE_CONVERSION = keys
 
-    constructor: (resource)->
+    constructor: (resource, @_resource = null)->
       angular.extend(@, resource)
       @before_init()
       @_extend_children()
@@ -36,6 +36,25 @@ angular.module('angular_objectify_resource')
       _.forIn @, (value, key)->
         result[key] = value unless utils.string_starts_with(key, '_') || angular.isFunction(value)
       result
+
+    save: (args...)->
+      params = @toParams()
+      on_success = ->
+      on_error   = ->
+      if _.isObject(args[0])
+        _.extend params, args[0]
+        on_success = args[1] if_.isFunction(args[1])
+        on_error   = args[2] if_.isFunction(args[2])
+      else
+        on_success = args[0] if_.isFunction(args[0])
+        on_error   = args[1] if_.isFunction(args[2])
+      if @id
+        @_resource.update(params, on_success, on_error)
+      else
+        @_resource.create(params, on_success, on_error)
+
+    destroy: (on_success, on_error)->
+      @_resource.destroy(@toParams(), on_success, on_error)
 
     _convert_dates: ->
       for own key, value of @

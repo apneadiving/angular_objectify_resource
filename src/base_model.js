@@ -34,7 +34,8 @@
           return this.SKIP_DATE_CONVERSION = keys;
         };
 
-        function BaseModel(resource) {
+        function BaseModel(resource, _resource) {
+          this._resource = _resource != null ? _resource : null;
           angular.extend(this, resource);
           this.before_init();
           this._extend_children();
@@ -53,12 +54,37 @@
         BaseModel.prototype.toParams = function() {
           var result;
           result = {};
-          _.forIn(this, function(key, value) {
-            if (!(utils.string_starts_with('_') || angular.isFunction(that))) {
+          _.forIn(this, function(value, key) {
+            if (!(utils.string_starts_with(key, '_') || angular.isFunction(value))) {
               return result[key] = value;
             }
           });
           return result;
+        };
+
+        BaseModel.prototype.save = function() {
+          var args, on_error, on_success, params;
+          args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+          params = this.toParams();
+          on_success = function() {};
+          on_error = function() {};
+          if (_.isObject(args[0])) {
+            _.extend(params, args[0]);
+            on_success = args[1](if_.isFunction(args[1]));
+            on_error = args[2](if_.isFunction(args[2]));
+          } else {
+            on_success = args[0](if_.isFunction(args[0]));
+            on_error = args[1](if_.isFunction(args[2]));
+          }
+          if (this.id) {
+            return this._resource.update(params, on_success, on_error);
+          } else {
+            return this._resource.create(params, on_success, on_error);
+          }
+        };
+
+        BaseModel.prototype.destroy = function(on_success, on_error) {
+          return this._resource.destroy(this.toParams(), on_success, on_error);
         };
 
         BaseModel.prototype._convert_dates = function() {

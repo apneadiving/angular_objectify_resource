@@ -4,6 +4,7 @@ angular.module('angular_objectify_resource')
     #  options is an object:
     #    model:     class
     #    namespace: if response is not an array, gives the key to get data
+    #    resource:  the service
     get: (options)->
 
       build_object: (callback)->
@@ -35,4 +36,4 @@ angular.module('angular_objectify_resource')
             response
 
       resource_build_method: (resource)->
-        new options.model(resource)
+        new options.model(resource, options.resource)
