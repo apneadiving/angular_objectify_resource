@@ -38,23 +38,17 @@ angular.module('angular_objectify_resource')
       result
 
     save: (args...)->
-      params = @toParams()
-      on_success = ->
-      on_error   = ->
-      if _.isObject(args[0])
-        _.extend params, args[0]
-        on_success = args[1] if_.isFunction(args[1])
-        on_error   = args[2] if_.isFunction(args[2])
-      else
-        on_success = args[0] if_.isFunction(args[0])
-        on_error   = args[1] if_.isFunction(args[2])
+      argz   = utils.extract_params(args)
+      params = _.extend @toParams(), argz.params
       if @_is_persisted()
-        @_resource.update(params, on_success, on_error)
+        @_resource.update(params, argz.on_success, argz.on_error)
       else
-        @_resource.create(params, on_success, on_error)
+        @_resource.create(params, argz.on_success, argz.on_error)
 
-    destroy: (on_success, on_error)->
-      @_resource.destroy(@toParams(), on_success, on_error)
+    destroy: (args...)->
+      argz   = utils.extract_params(args)
+      params = _.extend @toParams(), argz.params
+      @_resource.destroy(params, argz.on_success, argz.on_error)
 
     _is_persisted: ->
       _.has(@, 'id')

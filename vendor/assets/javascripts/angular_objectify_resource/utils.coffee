@@ -12,3 +12,15 @@ angular.module('angular_objectify_resource').factory 'aor.utils', ->
 
     singularize: (string)->
       string.substring(0, string.length - 1)
+
+    extract_params: (args_array)->
+      result = {params: {}, on_error: ->(), on_success: ->()}
+      index_offset = 0
+
+      if _.isObject(args_array[0])
+        result.params = args_array[0]
+        index_offset = 1
+
+      result.on_success = args[index_offset] if _.isFunction(args[index_offset + 1])
+      result.on_error   = args[index_offset] if _.isFunction(args[index_offset + 1])
+      result
