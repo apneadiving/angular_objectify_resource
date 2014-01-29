@@ -41,7 +41,7 @@ angular.module('angular_objectify_resource')
       if @_is_persisted then { id: @id } else { }
 
     _params: (additional_routing_params = {})->
-      result = _.extend @_base_routing_params, additional_routing_params
+      result = _.extend @_base_routing_params(), additional_routing_params
       result[@_params_key()] = @toParams()
       result
 
