@@ -38,7 +38,7 @@ angular.module('angular_objectify_resource')
       result
 
     _base_routing_params: ->
-      if @_is_persisted then { id: @id } else { }
+      if @_is_persisted() then { id: @id } else { }
 
     _params: (additional_routing_params = {})->
       result = _.extend @_base_routing_params(), additional_routing_params
@@ -56,10 +56,13 @@ angular.module('angular_objectify_resource')
     # define _params_key
     destroy: (args...)->
       argz = utils.extract_params(args)
-      @_resource.destroy(@_params(argz.routing_params), argz.on_success, argz.on_error)
+      if @_is_persisted()
+        @_resource.destroy(@_params(argz.routing_params), argz.on_success, argz.on_error)
+      else
+        argz.on_success()
 
     _is_persisted: ->
-      _.has(@, 'id')
+      _.isNumber(@id) || _.isString(@id)
 
     _convert_dates: ->
       for own key, value of @

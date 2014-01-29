@@ -3,8 +3,8 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   describe("BaseModel", function() {
-    var baseModel, created_at, created_at_string, object, subject;
-    baseModel = subject = null;
+    var baseModel, created_at, created_at_string, object, resource, subject;
+    baseModel = subject = resource = null;
     created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT');
     created_at_string = "2013-12-16T15:31:53+0000";
     object = {
@@ -24,17 +24,145 @@
     beforeEach(module('angular_objectify_resource'));
     beforeEach(function() {
       return inject(function($injector) {
-        return baseModel = $injector.get('aor.BaseModel');
+        baseModel = $injector.get('aor.BaseModel');
+        return resource = {
+          create: jasmine.createSpy('create'),
+          update: jasmine.createSpy('update'),
+          destroy: jasmine.createSpy('destroy')
+        };
       });
     });
     describe("base features", function() {
       beforeEach(function() {
-        return subject = new baseModel(object);
+        return subject = new baseModel(object, resource);
       });
-      return it("extends object passed in arg", function() {
+      it("extends object passed in arg", function() {
         expect(subject.foo).toEqual(object.foo);
         expect(subject.bars).toEqual(object.bars);
         return expect(subject.baz).toEqual(object.baz);
+      });
+      describe("_is_persisted", function() {
+        it("object with id is considered persisted", function() {
+          return expect(subject._is_persisted()).toBeTruthy();
+        });
+        return it("by default, object without id is considered not persisted", function() {
+          subject.id = null;
+          return expect(subject._is_persisted()).toBeFalsy();
+        });
+      });
+      describe("toParams", function() {
+        return it("only returns attributes, not including _", function() {
+          subject._private = true;
+          return expect(_.keys(subject.toParams())).toEqual(_.keys(object));
+        });
+      });
+      describe("_base_routing_params", function() {
+        it("when persisted", function() {
+          return expect(subject._base_routing_params()).toEqual({
+            id: subject.id
+          });
+        });
+        return it("when not persisted", function() {
+          subject.id = null;
+          return expect(subject._base_routing_params()).toEqual({});
+        });
+      });
+      return describe("save context", function() {
+        beforeEach(function() {
+          return subject._params_key = function() {
+            return 'param_key';
+          };
+        });
+        describe("_params", function() {
+          it("merges routing params and real params", function() {
+            var result;
+            result = subject._params();
+            expect(_.keys(result)).toEqual(['id', 'param_key']);
+            return expect(_.keys(result.param_key)).toEqual(_.keys(object));
+          });
+          return it("adds additional routing params", function() {
+            var result;
+            result = subject._params({
+              parent_id: 'id'
+            });
+            return expect(_.keys(result)).toEqual(['id', 'parent_id', 'param_key']);
+          });
+        });
+        return describe("_params stubbed", function() {
+          beforeEach(function() {
+            subject._params = function(arg) {
+              return arg;
+            };
+            this.on_success = jasmine.createSpy('on_success');
+            return this.on_error = jasmine.createSpy('on_error');
+          });
+          describe("save", function() {
+            describe("when persisted", function() {
+              it("without additional routing keys", function() {
+                subject.save(this.on_success, this.on_error);
+                return expect(resource.update).toHaveBeenCalledWith({}, this.on_success, this.on_error);
+              });
+              return it("with additional routing keys", function() {
+                subject.save({
+                  parent_id: 'id'
+                }, this.on_success, this.on_error);
+                return expect(resource.update).toHaveBeenCalledWith({
+                  parent_id: 'id'
+                }, this.on_success, this.on_error);
+              });
+            });
+            return describe("when not persisted", function() {
+              beforeEach(function() {
+                return subject.id = void 0;
+              });
+              it("without additional routing keys", function() {
+                subject.save(this.on_success, this.on_error);
+                return expect(resource.create).toHaveBeenCalledWith({}, this.on_success, this.on_error);
+              });
+              return it("with additional routing keys", function() {
+                subject.save({
+                  parent_id: 'id'
+                }, this.on_success, this.on_error);
+                return expect(resource.create).toHaveBeenCalledWith({
+                  parent_id: 'id'
+                }, this.on_success, this.on_error);
+              });
+            });
+          });
+          return describe("destroy", function() {
+            describe("when persisted", function() {
+              it("without additional routing keys", function() {
+                subject.destroy(this.on_success, this.on_error);
+                return expect(resource.destroy).toHaveBeenCalledWith({}, this.on_success, this.on_error);
+              });
+              return it("with additional routing keys", function() {
+                subject.destroy({
+                  parent_id: 'id'
+                }, this.on_success, this.on_error);
+                return expect(resource.destroy).toHaveBeenCalledWith({
+                  parent_id: 'id'
+                }, this.on_success, this.on_error);
+              });
+            });
+            return describe("when not persisted", function() {
+              beforeEach(function() {
+                return subject.id = void 0;
+              });
+              it("without additional routing keys", function() {
+                subject.destroy(this.on_success, this.on_error);
+                expect(this.on_success).toHaveBeenCalled();
+                return expect(resource.destroy).not.toHaveBeenCalled();
+              });
+              return it("with additional routing keys", function() {
+                subject.destroy({
+                  parent_id: 'id'
+                }, this.on_success, this.on_error);
+                expect(this.on_success).toHaveBeenCalled();
+                return expect(resource.destroy).not.toHaveBeenCalled();
+              });
+            });
+          });
+        });
       });
     });
     return describe("inheritance", function() {

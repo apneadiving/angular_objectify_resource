@@ -1,8 +1,9 @@
 describe "BaseModel", ->
 
-  baseModel = subject = null
+  baseModel = subject = resource = null
   created_at = new Date('Wed, 28 Jul 1999 15:15:20 GMT')
   created_at_string = "2013-12-16T15:31:53+0000"
+
   object    =
     id:   'id'
     foo:  'foo'
@@ -19,14 +20,111 @@ describe "BaseModel", ->
   beforeEach ->
     inject ($injector)->
       baseModel = $injector.get('aor.BaseModel')
+      resource =
+        create:  jasmine.createSpy('create')
+        update:  jasmine.createSpy('update')
+        destroy: jasmine.createSpy('destroy')
 
   describe "base features", ->
-    beforeEach -> subject = new baseModel(object)
+    beforeEach ->
+      subject = new baseModel(object, resource)
 
     it "extends object passed in arg", ->
       expect(subject.foo).toEqual  object.foo
       expect(subject.bars).toEqual object.bars
       expect(subject.baz).toEqual  object.baz
+
+    describe "_is_persisted", ->
+      it "object with id is considered persisted", ->
+        expect(subject._is_persisted()).toBeTruthy()
+
+      it "by default, object without id is considered not persisted", ->
+        subject.id = null
+        expect(subject._is_persisted()).toBeFalsy()
+
+    describe "toParams", ->
+      it "only returns attributes, not including _", ->
+        subject._private = true
+        expect(_.keys(subject.toParams())).toEqual _.keys(object)
+
+    describe "_base_routing_params", ->
+      it "when persisted", ->
+        expect(subject._base_routing_params()).toEqual { id: subject.id }
+
+      it "when not persisted", ->
+        subject.id = null
+        expect(subject._base_routing_params()).toEqual { }
+
+    describe "save context", ->
+      beforeEach ->
+        subject._params_key = -> 'param_key'
+
+      describe "_params", ->
+        it "merges routing params and real params", ->
+          result = subject._params()
+          expect(_.keys(result)).toEqual ['id', 'param_key']
+          expect(_.keys(result.param_key)).toEqual _.keys(object)
+
+        it "adds additional routing params", ->
+          result = subject._params({ parent_id: 'id' })
+          expect(_.keys(result)).toEqual ['id', 'parent_id', 'param_key']
+
+      describe "_params stubbed", ->
+        beforeEach ->
+          subject._params = (arg)-> arg
+          @on_success = jasmine.createSpy('on_success')
+          @on_error   = jasmine.createSpy('on_error')
+
+        describe "save", ->
+
+          describe "when persisted", ->
+
+            it "without additional routing keys", ->
+              subject.save(@on_success, @on_error)
+              expect(resource.update).toHaveBeenCalledWith({}, @on_success, @on_error)
+
+            it "with additional routing keys", ->
+              subject.save({parent_id: 'id'}, @on_success, @on_error)
+              expect(resource.update).toHaveBeenCalledWith({parent_id: 'id'}, @on_success, @on_error)
+
+          describe "when not persisted", ->
+            beforeEach ->
+              subject.id = undefined
+
+            it "without additional routing keys", ->
+              subject.save(@on_success, @on_error)
+              expect(resource.create).toHaveBeenCalledWith({}, @on_success, @on_error)
+
+            it "with additional routing keys", ->
+              subject.save({parent_id: 'id'}, @on_success, @on_error)
+              expect(resource.create).toHaveBeenCalledWith({parent_id: 'id'}, @on_success, @on_error)
+
+        describe "destroy", ->
+
+          describe "when persisted", ->
+
+            it "without additional routing keys", ->
+              subject.destroy(@on_success, @on_error)
+              expect(resource.destroy).toHaveBeenCalledWith({}, @on_success, @on_error)
+
+            it "with additional routing keys", ->
+              subject.destroy({parent_id: 'id'}, @on_success, @on_error)
+              expect(resource.destroy).toHaveBeenCalledWith({parent_id: 'id'}, @on_success, @on_error)
+
+          describe "when not persisted", ->
+            beforeEach ->
+              subject.id = undefined
+
+            it "without additional routing keys", ->
+              subject.destroy(@on_success, @on_error)
+              expect(@on_success).toHaveBeenCalled()
+              expect(resource.destroy).not.toHaveBeenCalled()
+
+            it "with additional routing keys", ->
+              subject.destroy({parent_id: 'id'}, @on_success, @on_error)
+              expect(@on_success).toHaveBeenCalled()
+              expect(resource.destroy).not.toHaveBeenCalled()
+
 
   describe "inheritance", ->
     Foo = Bar = Baz = child = decorator = null
@@ -121,4 +219,5 @@ describe "BaseModel", ->
 
       it "creates method buildBaz", ->
         expect(subject.buildBaz).toBeDefined()
+
 

@@ -63,7 +63,7 @@
         };
 
         BaseModel.prototype._base_routing_params = function() {
-          if (this._is_persisted) {
+          if (this._is_persisted()) {
             return {
               id: this.id
             };
@@ -77,7 +77,7 @@
           if (additional_routing_params == null) {
             additional_routing_params = {};
           }
-          result = _.extend(this._base_routing_params, additional_routing_params);
+          result = _.extend(this._base_routing_params(), additional_routing_params);
           result[this._params_key()] = this.toParams();
           return result;
         };
@@ -97,11 +97,15 @@
           var args, argz;
           args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           argz = utils.extract_params(args);
-          return this._resource.destroy(this._params(argz.routing_params), argz.on_success, argz.on_error);
+          if (this._is_persisted()) {
+            return this._resource.destroy(this._params(argz.routing_params), argz.on_success, argz.on_error);
+          } else {
+            return argz.on_success();
+          }
         };
 
         BaseModel.prototype._is_persisted = function() {
-          return _.has(this, 'id');
+          return _.isNumber(this.id) || _.isString(this.id);
         };
 
         BaseModel.prototype._convert_dates = function() {

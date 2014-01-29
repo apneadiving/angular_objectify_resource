@@ -31,7 +31,7 @@
           }
         };
         index_offset = 0;
-        if (_.isObject(args_array[0])) {
+        if (!_.isFunction(args_array[0])) {
           result.routing_params = args_array[0];
           index_offset = 1;
         }
