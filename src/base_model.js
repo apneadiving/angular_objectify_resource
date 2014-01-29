@@ -62,15 +62,23 @@
           return result;
         };
 
+        BaseModel.prototype._base_routing_params = function() {
+          if (this._is_persisted) {
+            return {
+              id: this.id
+            };
+          } else {
+            return {};
+          }
+        };
+
         BaseModel.prototype._params = function(additional_routing_params) {
           var result;
           if (additional_routing_params == null) {
             additional_routing_params = {};
           }
-          result = _.extend({
-            id: this.id
-          }, additional_routing_params);
-          result[this._params_key] = this.toParams();
+          result = _.extend(this._base_routing_params, additional_routing_params);
+          result[this._params_key()] = this.toParams();
           return result;
         };
 

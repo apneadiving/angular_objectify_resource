@@ -37,9 +37,12 @@ angular.module('angular_objectify_resource')
         result[key] = value unless utils.string_starts_with(key, '_') || angular.isFunction(value)
       result
 
+    _base_routing_params: ->
+      if @_is_persisted then { id: @id } else { }
+
     _params: (additional_routing_params = {})->
-      result = _.extend { id: @id }, additional_routing_params
-      result[@_params_key] = @toParams()
+      result = _.extend @_base_routing_params, additional_routing_params
+      result[@_params_key()] = @toParams()
       result
 
     # define _params_key
