@@ -37,18 +37,23 @@ angular.module('angular_objectify_resource')
         result[key] = value unless utils.string_starts_with(key, '_') || angular.isFunction(value)
       result
 
-    save: (args...)->
-      argz   = utils.extract_params(args)
-      params = _.extend @toParams(), argz.params
-      if @_is_persisted()
-        @_resource.update(params, argz.on_success, argz.on_error)
-      else
-        @_resource.create(params, argz.on_success, argz.on_error)
+    _params: (additional_routing_params = {})->
+      result = _.extend { id: @id }, additional_routing_params
+      result[@_params_key] = @toParams()
+      result
 
+    # define _params_key
+    save: (args...)->
+      argz = utils.extract_params(args)
+      if @_is_persisted()
+        @_resource.update(@_params(argz.routing_params), argz.on_success, argz.on_error)
+      else
+        @_resource.create(@_params(argz.routing_params), argz.on_success, argz.on_error)
+
+    # define _params_key
     destroy: (args...)->
-      argz   = utils.extract_params(args)
-      params = _.extend @toParams(), argz.params
-      @_resource.destroy(params, argz.on_success, argz.on_error)
+      argz = utils.extract_params(args)
+      @_resource.destroy(@_params(argz.routing_params), argz.on_success, argz.on_error)
 
     _is_persisted: ->
       _.has(@, 'id')

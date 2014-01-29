@@ -22,20 +22,24 @@
       extract_params: function(args_array) {
         var index_offset, result;
         result = {
-          params: {},
-          on_error: function() {},
-          on_success: function() {}
+          routing_params: {},
+          on_error: function(response) {
+            return response;
+          },
+          on_success: function(response) {
+            return response;
+          }
         };
         index_offset = 0;
         if (_.isObject(args_array[0])) {
-          result.params = args_array[0];
+          result.routing_params = args_array[0];
           index_offset = 1;
         }
-        if (_.isFunction(args[index_offset + 1])) {
-          result.on_success = args[index_offset];
+        if (_.isFunction(args_array[index_offset])) {
+          result.on_success = args_array[index_offset];
         }
-        if (_.isFunction(args[index_offset + 1])) {
-          result.on_error = args[index_offset];
+        if (_.isFunction(args_array[index_offset + 1])) {
+          result.on_error = args_array[index_offset + 1];
         }
         return result;
       }

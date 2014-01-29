@@ -62,24 +62,34 @@
           return result;
         };
 
+        BaseModel.prototype._params = function(additional_routing_params) {
+          var result;
+          if (additional_routing_params == null) {
+            additional_routing_params = {};
+          }
+          result = _.extend({
+            id: this.id
+          }, additional_routing_params);
+          result[this._params_key] = this.toParams();
+          return result;
+        };
+
         BaseModel.prototype.save = function() {
-          var args, argz, params;
+          var args, argz;
           args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           argz = utils.extract_params(args);
-          params = _.extend(this.toParams(), argz.params);
           if (this._is_persisted()) {
-            return this._resource.update(params, argz.on_success, argz.on_error);
+            return this._resource.update(this._params(argz.routing_params), argz.on_success, argz.on_error);
           } else {
-            return this._resource.create(params, argz.on_success, argz.on_error);
+            return this._resource.create(this._params(argz.routing_params), argz.on_success, argz.on_error);
           }
         };
 
         BaseModel.prototype.destroy = function() {
-          var args, argz, params;
+          var args, argz;
           args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           argz = utils.extract_params(args);
-          params = _.extend(this.toParams(), argz.params);
-          return this._resource.destroy(params, argz.on_success, argz.on_error);
+          return this._resource.destroy(this._params(argz.routing_params), argz.on_success, argz.on_error);
         };
 
         BaseModel.prototype._is_persisted = function() {

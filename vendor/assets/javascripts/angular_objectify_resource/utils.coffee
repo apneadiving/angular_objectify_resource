@@ -15,16 +15,16 @@ angular.module('angular_objectify_resource').factory 'aor.utils', ->
 
     extract_params: (args_array)->
       result =
-        params:     {}
-        on_error:   ->
-        on_success: ->
+        routing_params: {}
+        on_error:       (response)-> response
+        on_success:     (response)-> response
 
       index_offset = 0
 
       if _.isObject(args_array[0])
-        result.params = args_array[0]
+        result.routing_params = args_array[0]
         index_offset = 1
 
-      result.on_success = args_array[index_offset] if _.isFunction(args_array[index_offset + 1])
-      result.on_error   = args_array[index_offset] if _.isFunction(args_array[index_offset + 1])
+      result.on_success = args_array[index_offset]     if _.isFunction(args_array[index_offset])
+      result.on_error   = args_array[index_offset + 1] if _.isFunction(args_array[index_offset + 1])
       result
