@@ -29,9 +29,7 @@ angular.module('angular_objectify_resource')
     after_init: ->
 
     decorator: ->
-      @_decorator ?= new (@constructor.DECORATOR)(@)
-
-    toString: -> @toParams()
+      new (@constructor.DECORATOR)(@)
 
     toParams: ->
       result = {}
