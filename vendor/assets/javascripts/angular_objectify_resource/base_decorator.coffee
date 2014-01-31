@@ -7,7 +7,9 @@ angular.module('angular_objectify_resource')
       @DECORATED_ASSOCIATIONS ?= []
       @DECORATED_ASSOCIATIONS.push name
 
-    constructor: (@_object)->
+    constructor: (object)->
+      @_object = -> object
+
       @_delegate_methods()
       @_decorate_associations()
       @after_init()
@@ -15,7 +17,7 @@ angular.module('angular_objectify_resource')
     after_init: ->
 
     _delegate_methods: ->
-      for key, value of @_object
+      for key, value of @_object()
         # dont override methods of the decorator
         unless @[key]
           closure = if angular.isFunction(value)
@@ -24,17 +26,17 @@ angular.module('angular_objectify_resource')
                     else
                       (local_object, local_key)->
                         -> local_object[local_key]
-          @[key] = closure(@_object, key)
+          @[key] = closure(@_object(), key)
 
     _decorate_associations: ->
       @constructor.DECORATED_ASSOCIATIONS ?= []
       for relation in @constructor.DECORATED_ASSOCIATIONS
-        continue unless @_object[relation]
-        closure = if angular.isArray @_object[relation]
+        continue unless @_object()[relation]
+        closure = if angular.isArray @_object()[relation]
                     (local_object, local_relation)->
                       ->
                         _.map local_object[local_relation], (element)-> element.decorator()
                   else
                     (local_object, local_relation)->
                       -> local_object[local_relation].decorator()
-        @[relation] = closure(@_object, relation)
+        @[relation] = closure(@_object(), relation)
