@@ -31,6 +31,8 @@ angular.module('angular_objectify_resource')
     decorator: ->
       @_decorator ?= new (@constructor.DECORATOR)(@)
 
+    toString: -> @toParams()
+
     toParams: ->
       result = {}
       _.forIn @, (value, key)->
